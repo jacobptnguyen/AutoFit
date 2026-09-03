@@ -1,0 +1,24 @@
+# env files - never commit real secrets, only .env.example templates
+.env
+.env.local
+.env*.local
+
+# Next.js (app/)
+app/node_modules/
+app/.next/
+app/out/
+app/*.tsbuildinfo
+app/next-env.d.ts
+
+# Python (ml-service/)
+ml-service/venv/
+ml-service/__pycache__/
+ml-service/**/__pycache__/
+*.pyc
+
+# OS / editor
+.DS_Store
+*.pem
+
+# Claude Code local state
+.claude/
