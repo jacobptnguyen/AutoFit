@@ -1,6 +1,6 @@
 # AutoFit
 
-**Live demo**: _add deployed URL here_
+[Live Demo](https://auto-fit-pi.vercel.app/)
 
 ![AutoFit results screen showing the data quality rating and an auto-picked regression model](./docs/screenshot.png)
 
@@ -8,7 +8,7 @@ AutoFit turns a raw CSV into a fitted predictive model and a data quality rating
 
 ## The problem
 
-Most tools that turn a raw dataset into predictive charts still assume you think like a data scientist: you have to already know which column you're predicting, which columns explain it, and which model architecture to reach for before the tool does anything useful. That's backwards for anyone without an ML background. The gap between "I have a spreadsheet" and "I can see the relationships in it" is exactly the friction most people get stuck on.
+Most tools that turn a raw dataset into predictive charts still assume you think like a data scientist: you have to already know which column you're predicting, which columns explain it, and which model architecture to reach for before the tool does anything useful. The gap between "I have a dataset" and "I can see the relationships in it" is exactly the friction most people get stuck on.
 
 AutoFit removes that prerequisite. Upload a CSV and it decides what's worth predicting, what predicts it, and which model fits, with no target column, no model selection, and no configuration.
 
@@ -25,3 +25,5 @@ AutoFit removes that prerequisite. Upload a CSV and it decides what's worth pred
 **Frontend** — Next.js (App Router, TypeScript), Tailwind CSS, Plotly.js.
 
 **Backend** — Flask (Python), pandas for dataset profiling, scikit-learn for model fitting, the Anthropic API (Claude) for reasoning, Flask-Limiter for rate limiting, gunicorn for production serving.
+
+**Deployment** — Frontend on Vercel, Backend on Render
