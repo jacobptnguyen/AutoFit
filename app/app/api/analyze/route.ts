@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
-export const maxDuration = 60;
+// Kept above gunicorn's 120s worker timeout (ml-service/Procfile) so Render
+// always gets to finish or fail on its own terms first, rather than Vercel
+// cutting off a request that was still legitimately working.
+export const maxDuration = 150;
 
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL ?? "http://localhost:5001";
 
