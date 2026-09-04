@@ -18,7 +18,7 @@ AutoFit removes that prerequisite. Upload a CSV and it decides what's worth pred
 - **Data quality scoring, not just a prediction.** A 1–5 rating flags completeness issues and the likelihood a dataset is synthetic or AI-generated, so you know whether the result underneath is worth trusting before you act on it.
 - **Manual override with instant re-fit.** Every AI pick — target, features, model, task type, metrics — can be second-guessed and re-run. The re-run never calls the LLM again: it's a pure, deterministic scikit-learn re-fit, so it's instant, free, and doesn't depend on an API being up. The AI's job is to produce the first recommendation; everything after that is the user's own call.
 - **Interactive, purpose-built visualizations.** Actual-vs-predicted fit, feature importance, and class distributions rendered client-side, designed around the dataset's shape rather than dropped into generic default chart styling.
-- **Production guardrails, not an afterthought.** File size and row-count caps, zero data persistence (everything is processed in memory and discarded once the request ends), and per-IP rate limiting protecting the LLM spend on a public-facing link.
+- **Production guardrails.** Uploads are capped at 10MB and 50,000 rows, zero data persistence (everything is processed in memory and discarded once the request ends), and per-IP rate limiting protecting the LLM spend on a public-facing link.
 
 ## Tech stack
 
