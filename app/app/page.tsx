@@ -22,6 +22,7 @@ export default function Home() {
   const [refitError, setRefitError] = useState<string | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const loadingRef = useRef<HTMLDivElement>(null);
+  const resultsCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchSamples()
@@ -65,6 +66,7 @@ export default function Home() {
     try {
       const newResults = await refitAnalysis(source, config);
       setResult({ ...result, results: newResults });
+      resultsCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       setRefitError(err instanceof Error ? err.message : "Could not re-run with those settings");
     } finally {
@@ -126,7 +128,7 @@ export default function Home() {
             rationale={result.quality.rationale}
             heuristics={result.quality.heuristics}
           />
-          <div className="flex flex-col gap-3">
+          <div ref={resultsCardRef} className="flex flex-col gap-3">
             <ResultsPanel
               results={result.results}
               columns={result.columns}
