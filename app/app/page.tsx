@@ -43,6 +43,12 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [status]);
 
+  useEffect(() => {
+    if (status === "done") {
+      resultsCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [status]);
+
   async function runAnalysis(task: () => Promise<AnalyzeResponse>, src: AnalysisSource) {
     setStatus("loading");
     setError(null);
@@ -127,6 +133,7 @@ export default function Home() {
             rating={result.quality.rating}
             rationale={result.quality.rationale}
             heuristics={result.quality.heuristics}
+            results={result.results}
           />
           <div ref={resultsCardRef} className="flex flex-col gap-3">
             <ResultsPanel

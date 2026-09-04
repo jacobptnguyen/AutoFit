@@ -55,7 +55,12 @@ def _prepare_features(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
     categorical_cols = X.columns.difference(numeric_cols)
 
     if len(numeric_cols):
-        X[numeric_cols] = SimpleImputer(strategy="median").fit_transform(X[numeric_cols])
+        non_empty_numeric = [c for c in numeric_cols if X[c].notna().any()]
+        empty_numeric = [c for c in numeric_cols if c not in non_empty_numeric]
+        if non_empty_numeric:
+            X[non_empty_numeric] = SimpleImputer(strategy="median").fit_transform(X[non_empty_numeric])
+        if empty_numeric:
+            X = X.drop(columns=empty_numeric)
     if len(categorical_cols):
         for col in categorical_cols:
             X[col] = X[col].fillna("__missing__")

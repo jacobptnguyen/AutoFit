@@ -22,7 +22,7 @@ export default function UploadZone({ samples, disabled, onFile, onSample }: Prop
       return;
     }
     if (file.size > MAX_FILE_SIZE_BYTES) {
-      setLocalError("That file is over the 10MB limit for this demo");
+      setLocalError("That file is over the 4MB limit for this demo");
       return;
     }
     setLocalError(null);

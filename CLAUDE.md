@@ -46,7 +46,7 @@ The Claude API call happens inside the Flask service, immediately after the pand
 
 ## Guardrails (public demo, so these are not optional)
 
-- **Upload caps** enforced at the Flask endpoint before any parsing happens: reject oversized files or too-many-row files outright (suggested starting defaults: ~10MB, ~50,000 rows; tune as needed).
+- **Upload caps** enforced at the Flask endpoint before any parsing happens: reject oversized files, too-many-row files, or too-many-column files outright (~4MB — Vercel's serverless function request-body limit is ~4.5MB, so this is a hard ceiling not just a suggested default — ~50,000 rows, ~500 columns; tune the row/column limits as needed).
 - **No persistence**: uploaded data is never written to disk or a database, and raw content is never logged. It exists only in memory for the duration of the request.
 - **Rate limiting**: `Flask-Limiter`, per-IP, on the upload/analyze endpoints. This is a public link hitting a paid LLM API, so this is the primary defense against a runaway bill.
 

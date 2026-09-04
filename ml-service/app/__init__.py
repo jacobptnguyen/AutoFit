@@ -2,7 +2,7 @@ import json
 import os
 
 import pandas as pd
-from flask import Flask, jsonify, request
+from flask import Flask, current_app, jsonify, request
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -15,8 +15,9 @@ from .reasoning import ReasoningError, reason_about_dataset
 from .samples import SAMPLES, load_sample
 from .validation import ConfigValidationError, validate_config
 
-MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10MB
+MAX_CONTENT_LENGTH = 4 * 1024 * 1024  # 4MB (Vercel's serverless function body limit is ~4.5MB)
 MAX_ROWS = 50_000
+MAX_COLUMNS = 500
 
 
 def create_app() -> Flask:
@@ -64,6 +65,8 @@ def create_app() -> Flask:
             return jsonify({"error": "Dataset has no data rows"}), 400
         if len(df) > MAX_ROWS:
             return jsonify({"error": f"Dataset has {len(df)} rows, which exceeds the {MAX_ROWS}-row limit"}), 400
+        if len(df.columns) > MAX_COLUMNS:
+            return jsonify({"error": f"Dataset has {len(df.columns)} columns, which exceeds the {MAX_COLUMNS}-column limit"}), 400
         if len(df.columns) < 2:
             return jsonify({"error": "Dataset needs at least two columns to find a relationship"}), 400
 
@@ -114,6 +117,8 @@ def create_app() -> Flask:
             return jsonify({"error": "Dataset has no data rows"}), 400
         if len(df) > MAX_ROWS:
             return jsonify({"error": f"Dataset has {len(df)} rows, which exceeds the {MAX_ROWS}-row limit"}), 400
+        if len(df.columns) > MAX_COLUMNS:
+            return jsonify({"error": f"Dataset has {len(df.columns)} columns, which exceeds the {MAX_COLUMNS}-column limit"}), 400
 
         config = _extract_config_from_request()
         if config is None:
@@ -156,7 +161,11 @@ def _load_dataframe_from_request() -> pd.DataFrame:
         try:
             return pd.read_csv(file.stream)
         except Exception as exc:
-            raise _RequestDataError(f"Could not parse CSV: {exc}") from exc
+            current_app.logger.warning("CSV parse failed: %s", exc)
+            raise _RequestDataError(
+                "Could not read this file as a CSV. Make sure it's a plain CSV file "
+                "(not an image or other format) saved with standard text encoding."
+            ) from exc
 
     payload = request.get_json(silent=True) or {}
     sample_id = payload.get("sample_id")

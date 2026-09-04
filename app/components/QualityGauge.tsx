@@ -1,12 +1,14 @@
 "use client";
 
 import { CSSProperties } from "react";
-import { QualityHeuristics } from "@/lib/types";
+import { AnalyzeResults, QualityHeuristics } from "@/lib/types";
+import { explainResults } from "@/lib/explain";
 
 interface Props {
   rating: number;
   rationale: string;
   heuristics: QualityHeuristics;
+  results: AnalyzeResults;
 }
 
 const STATUS_BY_RATING: Record<number, { color: string; label: string }> = {
@@ -20,8 +22,9 @@ const STATUS_BY_RATING: Record<number, { color: string; label: string }> = {
 const RADIUS = 80;
 const ARC_LENGTH = Math.PI * RADIUS; // half circumference
 
-export default function QualityGauge({ rating, rationale, heuristics }: Props) {
+export default function QualityGauge({ rating, rationale, heuristics, results }: Props) {
   const status = STATUS_BY_RATING[rating] ?? STATUS_BY_RATING[3];
+  const explanation = explainResults(results);
   const fraction = Math.max(0, Math.min(1, rating / 5));
   const targetOffset = ARC_LENGTH * (1 - fraction);
 
@@ -74,6 +77,21 @@ export default function QualityGauge({ rating, rationale, heuristics }: Props) {
       </div>
 
       <p className="text-sm leading-relaxed text-ink-secondary">{rationale}</p>
+
+      <div className="flex flex-col gap-4 border-t border-border pt-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.18em] text-ink-muted">The relationship</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-ink-secondary">
+            {explanation.relationshipExplanation}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs uppercase tracking-[0.18em] text-ink-muted">The scores</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-ink-secondary">
+            {explanation.metricsExplanation}
+          </p>
+        </div>
+      </div>
 
       <dl className="mt-auto grid grid-cols-2 gap-3 border-t border-border pt-4 text-xs">
         <div>

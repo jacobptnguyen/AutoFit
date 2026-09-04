@@ -1,6 +1,6 @@
 import { AnalysisSource, AnalyzeResponse, AnalyzeResults, ApiError, ManualConfig, SampleDataset } from "./types";
 
-export const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+export const MAX_FILE_SIZE_BYTES = 4 * 1024 * 1024;
 
 export async function fetchSamples(): Promise<SampleDataset[]> {
   const res = await fetch("/api/samples");
