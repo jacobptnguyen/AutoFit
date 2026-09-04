@@ -60,6 +60,8 @@ def create_app() -> Flask:
         except _RequestDataError as exc:
             return jsonify({"error": str(exc)}), 400
 
+        if len(df) == 0:
+            return jsonify({"error": "Dataset has no data rows"}), 400
         if len(df) > MAX_ROWS:
             return jsonify({"error": f"Dataset has {len(df)} rows, which exceeds the {MAX_ROWS}-row limit"}), 400
         if len(df.columns) < 2:
@@ -108,6 +110,8 @@ def create_app() -> Flask:
         except _RequestDataError as exc:
             return jsonify({"error": str(exc)}), 400
 
+        if len(df) == 0:
+            return jsonify({"error": "Dataset has no data rows"}), 400
         if len(df) > MAX_ROWS:
             return jsonify({"error": f"Dataset has {len(df)} rows, which exceeds the {MAX_ROWS}-row limit"}), 400
 
