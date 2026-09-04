@@ -215,9 +215,12 @@ export default function ConfigPanel({ columns, results, disabled, canReset, onSu
             <button
               onClick={handleSubmit}
               disabled={disabled}
-              className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:opacity-50"
             >
-              Re-run with these settings
+              {disabled && (
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-bg/40 border-t-bg" />
+              )}
+              {disabled ? "Re-running…" : "Re-run with these settings"}
             </button>
             {canReset && (
               <button
