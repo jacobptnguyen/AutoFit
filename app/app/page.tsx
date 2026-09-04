@@ -20,12 +20,25 @@ export default function Home() {
   const [datasetKey, setDatasetKey] = useState(0);
   const [refitting, setRefitting] = useState(false);
   const [refitError, setRefitError] = useState<string | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   useEffect(() => {
     fetchSamples()
       .then(setSamples)
       .catch(() => setSamples([]));
   }, []);
+
+  useEffect(() => {
+    if (status !== "loading") {
+      setElapsedSeconds(0);
+      return;
+    }
+    const start = Date.now();
+    const interval = setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - start) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [status]);
 
   async function runAnalysis(task: () => Promise<AnalyzeResponse>, src: AnalysisSource) {
     setStatus("loading");
@@ -85,9 +98,14 @@ export default function Home() {
       />
 
       {status === "loading" && (
-        <div className="flex items-center gap-3 text-ink-secondary">
-          <span className="h-2 w-2 animate-ping rounded-full bg-accent" />
-          <span className="text-sm">Profiling your data and reasoning about it…</span>
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-3 text-ink-secondary">
+            <span className="h-2 w-2 animate-ping rounded-full bg-accent" />
+            <span className="text-sm">
+              Profiling your data and reasoning about it… ({elapsedSeconds}s)
+            </span>
+          </div>
+          <p className="text-xs text-ink-muted">Larger datasets may take longer to process.</p>
         </div>
       )}
 

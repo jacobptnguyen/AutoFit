@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL ?? "http://localhost:5001";
 
 export async function POST(request: Request) {

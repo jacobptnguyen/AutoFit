@@ -5,10 +5,11 @@ scikit-learn so results are reproducible and easy to sanity-check.
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import (
-    GradientBoostingClassifier, GradientBoostingRegressor,
+    HistGradientBoostingClassifier, HistGradientBoostingRegressor,
     RandomForestClassifier, RandomForestRegressor,
 )
 from sklearn.impute import SimpleImputer
+from sklearn.inspection import permutation_importance
 from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge
 from sklearn.metrics import (
     accuracy_score, f1_score, mean_absolute_error, mean_absolute_percentage_error,
@@ -29,10 +30,10 @@ def _build_estimator(model: str, task_type: str):
         ("linear_regression", "regression"): lambda: LinearRegression(),
         ("ridge_regression", "regression"): lambda: Ridge(),
         ("logistic_regression", "classification"): lambda: LogisticRegression(max_iter=1000),
-        ("random_forest", "regression"): lambda: RandomForestRegressor(n_estimators=200, random_state=42),
-        ("random_forest", "classification"): lambda: RandomForestClassifier(n_estimators=200, random_state=42),
-        ("gradient_boosting", "regression"): lambda: GradientBoostingRegressor(random_state=42),
-        ("gradient_boosting", "classification"): lambda: GradientBoostingClassifier(random_state=42),
+        ("random_forest", "regression"): lambda: RandomForestRegressor(n_estimators=200, random_state=42, n_jobs=-1),
+        ("random_forest", "classification"): lambda: RandomForestClassifier(n_estimators=200, random_state=42, n_jobs=-1),
+        ("gradient_boosting", "regression"): lambda: HistGradientBoostingRegressor(random_state=42),
+        ("gradient_boosting", "classification"): lambda: HistGradientBoostingClassifier(random_state=42),
         ("knn", "regression"): lambda: KNeighborsRegressor(),
         ("knn", "classification"): lambda: KNeighborsClassifier(),
     }
@@ -118,7 +119,7 @@ def fit_and_evaluate(df: pd.DataFrame, analysis: dict) -> dict:
         except Exception:
             metrics[name] = None
 
-    feature_importance = _extract_feature_importance(estimator, X.columns)
+    feature_importance = _extract_feature_importance(estimator, X.columns, X_test, y_test)
 
     actual_vs_predicted = [
         {"actual": _jsonable(a), "predicted": _jsonable(p)}
@@ -146,13 +147,16 @@ def _safe_roc_auc(estimator, X_test, y_test):
     return None
 
 
-def _extract_feature_importance(estimator, columns):
+def _extract_feature_importance(estimator, columns, X_test, y_test):
     values = None
     if hasattr(estimator, "feature_importances_"):
         values = estimator.feature_importances_
     elif hasattr(estimator, "coef_"):
         coef = np.asarray(estimator.coef_)
         values = np.abs(coef).mean(axis=0) if coef.ndim > 1 else np.abs(coef)
+    elif X_test.shape[1] <= 50:
+        result = permutation_importance(estimator, X_test, y_test, n_repeats=3, random_state=42, n_jobs=-1)
+        values = result.importances_mean
 
     if values is None:
         return None
