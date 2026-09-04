@@ -37,7 +37,7 @@ export default function QualityGauge({ rating, rationale, heuristics, results }:
     <div className="rise flex h-full flex-col gap-6 rounded-2xl border border-border bg-surface p-6">
       <div>
         <p className="text-xs uppercase tracking-[0.18em] text-ink-muted">Data quality</p>
-        <h2 className="mt-1 font-display text-2xl italic text-ink">Is this worth modeling?</h2>
+        <h2 className="mt-1 font-display text-2xl text-ink">Is this worth modeling?</h2>
       </div>
 
       <div className="flex flex-col items-center">

@@ -23,7 +23,7 @@ export default function ResultsPanel({ results, columns, refitting, canReset, on
           <p className="text-xs uppercase tracking-[0.18em] text-ink-muted">
             Predicting {formatVariableName(results.target_variable)}
           </p>
-          <h2 className="mt-1 font-display text-2xl italic text-ink">
+          <h2 className="mt-1 font-display text-2xl text-ink">
             {formatModelName(results.model)}
           </h2>
         </div>

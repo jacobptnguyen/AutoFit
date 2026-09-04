@@ -1,10 +1,10 @@
 # AutoFit
 
+AutoFit turns a raw CSV into a fitted predictive model and a data quality rating, with no ML knowledge required. Upload a dataset and it picks the target variable, the predictors, the model, and the evaluation metrics for you.
+
 [Live Demo](https://auto-fit-pi.vercel.app/)
 
 ![AutoFit results screen showing the data quality rating and an auto-picked regression model](./docs/screenshot.png)
-
-AutoFit turns a raw CSV into a fitted predictive model and a data quality rating, with no ML knowledge required. Upload a dataset and it picks the target variable, the predictors, the model, and the evaluation metrics for you.
 
 ## The problem
 
