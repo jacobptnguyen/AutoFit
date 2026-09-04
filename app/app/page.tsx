@@ -102,7 +102,9 @@ export default function Home() {
           <div className="flex items-center gap-3 text-ink-secondary">
             <span className="h-2 w-2 animate-ping rounded-full bg-accent" />
             <span className="text-sm">
-              Profiling your data and reasoning about it… ({elapsedSeconds}s)
+              {elapsedSeconds < 15
+                ? `Profiling your data and reasoning about it… (${elapsedSeconds}s)`
+                : `Still working, the server may be waking up after sitting idle, this can take up to a minute… (${elapsedSeconds}s)`}
             </span>
           </div>
           <p className="text-xs text-ink-muted">Larger datasets may take longer to process.</p>
