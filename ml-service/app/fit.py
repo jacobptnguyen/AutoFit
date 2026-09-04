@@ -19,6 +19,7 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.model_selection import train_test_split
 
 MAX_CHART_POINTS = 200
+MAX_CATEGORIES_PER_COLUMN = 20
 
 
 class FitError(RuntimeError):
@@ -43,6 +44,11 @@ def _build_estimator(model: str, task_type: str):
     return builders[key]()
 
 
+def _cap_categories(series: pd.Series, max_categories: int) -> pd.Series:
+    top_values = series.value_counts().head(max_categories).index
+    return series.where(series.isin(top_values), "__other__")
+
+
 def _prepare_features(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
     X = df[features].copy()
     numeric_cols = X.select_dtypes(include="number").columns
@@ -53,6 +59,8 @@ def _prepare_features(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
     if len(categorical_cols):
         for col in categorical_cols:
             X[col] = X[col].fillna("__missing__")
+            if X[col].nunique() > MAX_CATEGORIES_PER_COLUMN:
+                X[col] = _cap_categories(X[col], MAX_CATEGORIES_PER_COLUMN)
         X = pd.get_dummies(X, columns=list(categorical_cols), drop_first=True)
 
     return X

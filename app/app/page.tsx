@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UploadZone from "@/components/UploadZone";
 import QualityGauge from "@/components/QualityGauge";
 import ResultsPanel from "@/components/ResultsPanel";
@@ -21,6 +21,7 @@ export default function Home() {
   const [refitting, setRefitting] = useState(false);
   const [refitError, setRefitError] = useState<string | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const loadingRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchSamples()
@@ -33,6 +34,7 @@ export default function Home() {
       setElapsedSeconds(0);
       return;
     }
+    loadingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     const start = Date.now();
     const interval = setInterval(() => {
       setElapsedSeconds(Math.floor((Date.now() - start) / 1000));
@@ -98,7 +100,7 @@ export default function Home() {
       />
 
       {status === "loading" && (
-        <div className="flex flex-col gap-1.5">
+        <div ref={loadingRef} className="flex flex-col gap-1.5">
           <div className="flex items-center gap-3 text-ink-secondary">
             <span className="h-2 w-2 animate-ping rounded-full bg-accent" />
             <span className="text-sm">
