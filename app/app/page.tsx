@@ -11,6 +11,7 @@ type Status = "idle" | "loading" | "done" | "error";
 
 export default function Home() {
   const [samples, setSamples] = useState<SampleDataset[]>([]);
+  const [samplesLoading, setSamplesLoading] = useState(true);
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<AnalyzeResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +28,8 @@ export default function Home() {
   useEffect(() => {
     fetchSamples()
       .then(setSamples)
-      .catch(() => setSamples([]));
+      .catch(() => setSamples([]))
+      .finally(() => setSamplesLoading(false));
   }, []);
 
   useEffect(() => {
@@ -102,6 +104,7 @@ export default function Home() {
 
       <UploadZone
         samples={samples}
+        samplesLoading={samplesLoading}
         disabled={status === "loading"}
         onFile={(file) => runAnalysis(() => analyzeFile(file), { file })}
         onSample={(id) => runAnalysis(() => analyzeSample(id), { sampleId: id })}

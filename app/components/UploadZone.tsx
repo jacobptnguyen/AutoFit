@@ -6,12 +6,13 @@ import { SampleDataset } from "@/lib/types";
 
 interface Props {
   samples: SampleDataset[];
+  samplesLoading: boolean;
   disabled: boolean;
   onFile: (file: File) => void;
   onSample: (id: string) => void;
 }
 
-export default function UploadZone({ samples, disabled, onFile, onSample }: Props) {
+export default function UploadZone({ samples, samplesLoading, disabled, onFile, onSample }: Props) {
   const [dragActive, setDragActive] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -74,19 +75,26 @@ export default function UploadZone({ samples, disabled, onFile, onSample }: Prop
         <span className="h-px flex-1 bg-border" />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        {samples.map((sample) => (
-          <button
-            key={sample.id}
-            disabled={disabled}
-            onClick={() => onSample(sample.id)}
-            className="rounded-xl border border-border bg-surface px-4 py-3 text-left transition-colors hover:border-accent disabled:pointer-events-none disabled:opacity-50"
-          >
-            <p className="font-medium text-ink">{sample.name}</p>
-            <p className="mt-1 text-xs text-ink-secondary">{sample.description}</p>
-          </button>
-        ))}
-      </div>
+      {samplesLoading ? (
+        <div className="flex items-center gap-3 text-ink-secondary">
+          <span className="h-2 w-2 animate-ping rounded-full bg-accent" />
+          <span className="text-sm">Loading sample datasets..</span>
+        </div>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-3">
+          {samples.map((sample) => (
+            <button
+              key={sample.id}
+              disabled={disabled}
+              onClick={() => onSample(sample.id)}
+              className="rounded-xl border border-border bg-surface px-4 py-3 text-left transition-colors hover:border-accent disabled:pointer-events-none disabled:opacity-50"
+            >
+              <p className="font-medium text-ink">{sample.name}</p>
+              <p className="mt-1 text-xs text-ink-secondary">{sample.description}</p>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
