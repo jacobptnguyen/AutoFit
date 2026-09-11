@@ -7,12 +7,20 @@ import { SampleDataset } from "@/lib/types";
 interface Props {
   samples: SampleDataset[];
   samplesLoading: boolean;
+  samplesElapsedSeconds: number;
   disabled: boolean;
   onFile: (file: File) => void;
   onSample: (id: string) => void;
 }
 
-export default function UploadZone({ samples, samplesLoading, disabled, onFile, onSample }: Props) {
+export default function UploadZone({
+  samples,
+  samplesLoading,
+  samplesElapsedSeconds,
+  disabled,
+  onFile,
+  onSample,
+}: Props) {
   const [dragActive, setDragActive] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -78,7 +86,11 @@ export default function UploadZone({ samples, samplesLoading, disabled, onFile, 
       {samplesLoading ? (
         <div className="flex items-center gap-3 text-ink-secondary">
           <span className="h-2 w-2 animate-ping rounded-full bg-accent" />
-          <span className="text-sm">Loading sample datasets..</span>
+          <span className="text-sm">
+            {samplesElapsedSeconds < 15
+              ? "Loading sample datasets.."
+              : `Still loading, the server may be waking up after sitting idle, this can take up to a minute… (${samplesElapsedSeconds}s)`}
+          </span>
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-3">

@@ -22,6 +22,7 @@ export default function Home() {
   const [refitting, setRefitting] = useState(false);
   const [refitError, setRefitError] = useState<string | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [samplesElapsedSeconds, setSamplesElapsedSeconds] = useState(0);
   const loadingRef = useRef<HTMLDivElement>(null);
   const resultsCardRef = useRef<HTMLDivElement>(null);
 
@@ -31,6 +32,18 @@ export default function Home() {
       .catch(() => setSamples([]))
       .finally(() => setSamplesLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!samplesLoading) {
+      setSamplesElapsedSeconds(0);
+      return;
+    }
+    const start = Date.now();
+    const interval = setInterval(() => {
+      setSamplesElapsedSeconds(Math.floor((Date.now() - start) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [samplesLoading]);
 
   useEffect(() => {
     if (status !== "loading") {
@@ -105,6 +118,7 @@ export default function Home() {
       <UploadZone
         samples={samples}
         samplesLoading={samplesLoading}
+        samplesElapsedSeconds={samplesElapsedSeconds}
         disabled={status === "loading"}
         onFile={(file) => runAnalysis(() => analyzeFile(file), { file })}
         onSample={(id) => runAnalysis(() => analyzeSample(id), { sampleId: id })}
